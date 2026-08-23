@@ -278,10 +278,10 @@ hl.window_rule({
 -- Bluetooth
 hl.window_rule({
     name = "bluetooth",
-    match = { class = "blueman-manager" },
+    match = { class = "bluetoothui" },
     float = true,
-    size = "600 400",
-    move = "(monitor_w-window_w-80) 60",
+    size = "700 500",
+    move = "(monitor_w-700-90) 60",
 })
 
 -- Wifi
@@ -290,16 +290,16 @@ hl.window_rule({
     match = { class = "networkui" },
     float = true,
     size = "700 700",
-    move = "(monitor_w-window_w-28) 60",
+    move = "(monitor_w-700-28) 60",
 })
 
 -- Audio
 hl.window_rule({
-    name = "pavucontrol",
-    match = { class = "org.pulseaudio.pavucontrol" },
+    name = "audioui",
+    match = { class = "audioui" },
     float = true,
-    size = "500 400",
-    move = "(monitor_w-window_w-100) 60",
+    size = "750 400",
+    move = "(monitor_w-750-150) 60",
 })
 
 -- Spotify

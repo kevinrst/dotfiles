@@ -5,10 +5,8 @@ DOTFILES_DIR=~/dotfiles
 sudo pacman -S --needed --noconfirm hyprland hyprpaper hyprlock hypridle pipewire pipewire-pulse waybar wofi rofi
   #apps
 sudo pacman -S --needed --noconfirm kitty alacritty firefox git zsh nautilus neovim wl-clipboard btop lazygit spotify-launcher cava
-  #tools (screenshots, bluetooth, notification, calendar)
-sudo pacman -S --needed --noconfirm swappy grim slurp blueman bluez bluez-utils swaync calcurse power-profiles-daemon impala
-  #waybar dependencies
-sudo pacman -S --needed --noconfirm pavucontrol playerctl brightnessctl jq
+  #tools (screenshots, bluetooth, notification, calendar, audiotui, etc)
+sudo pacman -S --needed --noconfirm swappy grim slurp bluez bluez-utils swaync calcurse power-profiles-daemon impala bluetui wiremix playerctl brightnessctl jq
 
 # Networking: iwd + systemd-resolved
 sudo mkdir -p /etc/iwd
