@@ -1,5 +1,5 @@
-if pgrep -f 'networkui' > /dev/null; then
-    pkill -f 'networkui'
+if pgrep -f 'kitty.*--class=networkui' > /dev/null; then
+    pkill -f 'kitty.*--class=networkui'
 fi
 
 if pgrep -f 'pavucontrol' > /dev/null; then

@@ -10,9 +10,9 @@ if pgrep -f 'kitty.*--class=calendar' > /dev/null; then
     pkill -f 'kitty.*--class=calendar'
 fi
 
-if pgrep -f 'networkui' > /dev/null; then
+if pgrep -f 'kitty.*--class=networkui' > /dev/null; then
     pkill -f 'networkui'
     exit
 fi
 
-kitty --class=networkui -e nmtui
+kitty --class=networkui -e impala

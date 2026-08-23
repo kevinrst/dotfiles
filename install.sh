@@ -6,9 +6,26 @@ sudo pacman -S --needed --noconfirm hyprland hyprpaper hyprlock hypridle pipewir
   #apps
 sudo pacman -S --needed --noconfirm kitty alacritty firefox git zsh nautilus neovim wl-clipboard btop lazygit spotify-launcher cava
   #tools (screenshots, bluetooth, notification, calendar)
-sudo pacman -S --needed --noconfirm swappy grim slurp blueman bluez bluez-utils swaync calcurse power-profiles-daemon
+sudo pacman -S --needed --noconfirm swappy grim slurp blueman bluez bluez-utils swaync calcurse power-profiles-daemon impala
   #waybar dependencies
-sudo pacman -S --needed --noconfirm network-manager-applet pavucontrol playerctl brightnessctl jq
+sudo pacman -S --needed --noconfirm pavucontrol playerctl brightnessctl jq
+
+# Networking: iwd + systemd-resolved
+sudo mkdir -p /etc/iwd
+sudo tee /etc/iwd/main.conf > /dev/null <<'EOF'
+[General]
+EnableNetworkConfiguration=true
+
+[Network]
+NameResolvingService=systemd
+EOF
+
+sudo systemctl disable --now NetworkManager 2>/dev/null || true
+sudo systemctl disable --now wpa_supplicant 2>/dev/null || true
+
+sudo systemctl enable --now iwd
+sudo systemctl enable --now systemd-resolved
+
 
 git config --global init.defaultBranch main
 

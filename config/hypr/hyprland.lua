@@ -289,8 +289,8 @@ hl.window_rule({
     name = "wifi",
     match = { class = "networkui" },
     float = true,
-    size = "500 400",
-    move = "(monitor_w-window_w-20) 60",
+    size = "700 700",
+    move = "(monitor_w-window_w-28) 60",
 })
 
 -- Audio
