@@ -23,7 +23,7 @@ sudo systemctl disable --now wpa_supplicant 2>/dev/null || true
 
 sudo systemctl enable --now iwd
 sudo systemctl enable --now systemd-resolved
-
+sudo ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 
 git config --global init.defaultBranch main
 
