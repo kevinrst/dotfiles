@@ -8,23 +8,6 @@ sudo pacman -S --needed --noconfirm kitty alacritty firefox git zsh nautilus neo
   #tools (screenshots, bluetooth, notification, calendar, audiotui, etc)
 sudo pacman -S --needed --noconfirm swappy grim slurp bluez bluez-utils swaync calcurse power-profiles-daemon impala bluetui wiremix playerctl brightnessctl jq
 
-# Networking: iwd + systemd-resolved
-sudo mkdir -p /etc/iwd
-sudo tee /etc/iwd/main.conf > /dev/null <<'EOF'
-[General]
-EnableNetworkConfiguration=true
-
-[Network]
-NameResolvingService=systemd
-EOF
-
-sudo systemctl disable --now NetworkManager 2>/dev/null || true
-sudo systemctl disable --now wpa_supplicant 2>/dev/null || true
-
-sudo systemctl enable --now iwd
-sudo systemctl enable --now systemd-resolved
-sudo ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
-
 git config --global init.defaultBranch main
 
 sudo systemctl enable --now bluetooth
@@ -118,5 +101,22 @@ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
   #rust
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 rustup component add rustfmt rust-analyzer
+
+# Networking: iwd + systemd-resolved
+sudo mkdir -p /etc/iwd
+sudo tee /etc/iwd/main.conf > /dev/null <<'EOF'
+[General]
+EnableNetworkConfiguration=true
+
+[Network]
+NameResolvingService=systemd
+EOF
+
+sudo systemctl disable --now NetworkManager 2>/dev/null || true
+sudo systemctl disable --now wpa_supplicant 2>/dev/null || true
+
+sudo systemctl enable --now iwd
+sudo systemctl enable --now systemd-resolved
+sudo ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 
 echo "completed, now reboot"

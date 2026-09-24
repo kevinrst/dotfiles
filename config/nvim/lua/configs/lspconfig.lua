@@ -70,4 +70,4 @@ vim.api.nvim_create_autocmd("LspAttach", {
       nvlsp.on_attach(client, args.buf)
     end
   end,
-}
+})
