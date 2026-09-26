@@ -7,6 +7,10 @@ if pgrep -x waybar > /dev/null; then
   WAYBAR=true
 fi
 
+# SwayNC
+cp -r "$THEME_DIR/swaync" "$HOME/.config"
+swaync-client -rs
+
 # Waybar
 cp "$THEME_DIR/waybar.css" "$HOME/.config/waybar/style.css"
 cp "$THEME_DIR/waybar-config" "$HOME/.config/waybar/config"

@@ -1,0 +1,139 @@
+@define-color background #343a46;
+@define-color notification-background #3d4452;
+@define-color background-hover #4a5363;
+
+@define-color text #d8dee9;
+@define-color text-secondary #81a1c1;
+
+@define-color close-background #4a5363;
+@define-color close-background-hover #5a6578;
+
+* {
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+}
+
+.notification-row {
+    outline: none;
+}
+.notification-row:hover {
+    background: transparent;
+}
+
+.notification-background {
+    background-color: @notification-background;
+
+    border: none;
+    border-radius: 10px;
+
+    padding: 14px;
+    margin: 6px;
+}
+
+
+.notification-default-action {
+    background-color: @notification-background;
+    border: none;
+    border-radius: 10px;
+}
+.notification-default-action:hover {
+    background-color: @background-hover;
+}
+
+.notification {
+    background-color: transparent;
+
+    border: none;
+    border-radius: 10px;
+
+    box-shadow: none;
+}
+
+.notification-content {
+    background-color: transparent;
+
+    border: none;
+    border-radius: 10px;
+
+    padding: 6px;
+}
+
+.summary {
+    color: @text;
+
+    font-size: 14px;
+    font-weight: bold;
+
+    background: transparent;
+}
+
+.body {
+    color: @text-secondary;
+
+    font-size: 13px;
+    font-weight: normal;
+
+    background: transparent;
+}
+
+.time {
+    color: @text-secondary;
+
+    font-size: 12px;
+    font-weight: normal;
+
+    background: transparent;
+}
+
+.close-button {
+    background-color: @close-background;
+
+    border: none;
+    border-radius: 50%;
+
+    box-shadow: none;
+
+    min-width: 24px;
+    min-height: 24px;
+
+    margin: 4px;
+}
+
+.close-button:hover {
+    background-color: @close-background-hover;
+}
+
+/* SwayNC client */
+
+.control-center {
+    background-color: @background;
+
+    border: none;
+    border-radius: 10px;
+
+    padding: 14px;
+}
+
+.control-center-list {
+    background: transparent;
+}
+
+.control-center-list > row {
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    padding: 0;
+}
+
+.control-center-list > row:hover {
+    background: transparent;
+}
+
+.control-center .notification-group {
+    background: transparent;
+
+    border: none;
+    border-radius: 10px;
+
+    padding: 0;
+    margin: 6px;
+}
