@@ -119,4 +119,17 @@ while IFS=: read -r slug file; do
 done < "$DOTFILES_DIR/omarchy/themes/wallpapers.map"
 echo "applied: theme wallpapers (see omarchy/themes/wallpapers.map)"
 
+# Stock nord ships several backgrounds; keep only ours (nord_lake.png, added
+# above via backgrounds/nord/). Needs privilege; re-created by omarchy updates.
+if [[ -d /usr/share/omarchy/themes/nord/backgrounds ]]; then
+  if sudo -n true 2>/dev/null; then
+    sudo rm -f /usr/share/omarchy/themes/nord/backgrounds/*
+  elif command -v pkexec >/dev/null 2>&1; then
+    pkexec rm -f /usr/share/omarchy/themes/nord/backgrounds/*
+  else
+    sudo rm -f /usr/share/omarchy/themes/nord/backgrounds/*
+  fi
+  echo "pruned: stock nord backgrounds (only nord_lake.png remains available)"
+fi
+
 echo "done. verify with: omarchy menu keybindings --print"
