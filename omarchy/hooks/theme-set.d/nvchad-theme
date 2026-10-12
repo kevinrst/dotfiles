@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+#
+# nvchad-theme -- omarchy theme-set hook: follow the Omarchy theme in NvChad.
+#
+# Installed to ~/.config/omarchy/hooks/theme-set.d/nvchad-theme (see
+# apply-omarchy.sh). Omarchy runs it after every `omarchy theme set` with the
+# theme slug in $1.
+#
+# It maps the Omarchy theme to the closest NvChad base46 theme, persists it in
+# chadrc.lua (so new nvim instances start themed), and live-reloads every
+# running nvim server -- no restart needed.
+
+set -uo pipefail
+
+OMARCHY_THEME="$(echo "${1:-}" | sed -E 's/<[^>]+>//g' | tr '[:upper:]' '[:lower:]' | tr ' ' '-')"
+CHADRC="$HOME/.config/nvim/lua/chadrc.lua"
+
+# Omarchy theme slug -> NvChad base46 theme. Closest visual match wins;
+# unknown (e.g. custom) themes fall back to catppuccin. Edit freely.
+base46_for_omarchy() {
+  case "$1" in
+    catppuccin)        echo "catppuccin" ;;
+    catppuccin-latte)  echo "catppuccin-latte" ;;
+    ethereal)          echo "eldritch" ;;
+    everforest)        echo "everforest" ;;
+    flexoki-light)     echo "flexoki-light" ;;
+    gruvbox)           echo "gruvbox" ;;
+    hackerman)         echo "mito-laser" ;;
+    kanagawa)          echo "kanagawa" ;;
+    last-horizon)      echo "nightowl" ;;
+    lumon)             echo "penumbra_dark" ;;
+    lupine)            echo "rxyhn" ;;
+    matte-black)       echo "monochrome" ;;
+    miasma)            echo "decay" ;;
+    nord)              echo "nord" ;;
+    osaka-jade)        echo "solarized_osaka" ;;
+    retro-82)          echo "flouromachine" ;;
+    ristretto)         echo "espresso" ;;
+    rose-pine)         echo "rosepine" ;;
+    solitude)          echo "ashes" ;;
+    tokyo-night)       echo "tokyonight" ;;
+    vantablack)        echo "doomchad" ;;
+    white)             echo "default-light" ;;
+    *)
+      echo "catppuccin" ;;
+  esac
+}
+
+if [[ -z "$OMARCHY_THEME" ]]; then
+  echo "nvchad-theme: no omarchy theme given" >&2
+  exit 1
+fi
+
+if [[ ! -f "$CHADRC" ]]; then
+  echo "nvchad-theme: NvChad config not found at $CHADRC, skipping" >&2
+  exit 0
+fi
+
+BASE46_THEME="$(base46_for_omarchy "$OMARCHY_THEME")"
+
+# Persist for new instances (same edit NvChad's own theme picker makes).
+sed -i -E "s/(theme *= *)\"[^\"]+\"/\1\"$BASE46_THEME\"/" "$CHADRC"
+
+# Rebuild the base46 cache headless so instances started later pick it up
+# even before their first full load.
+nvim --headless +"lua require('base46').compile()" +q 2>/dev/null || true
+
+# Live-reload every running nvim server (no restart needed). Servers without
+# the omarchy-theme module (e.g. other configs) safely no-op.
+reloaded=0
+runtime_dir="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+for sock in "$runtime_dir"/nvim.*.0; do
+  [[ -S "$sock" ]] || continue
+  if timeout 5 nvim --server "$sock" --remote-expr \
+    "luaeval(\"require('omarchy-theme').apply('$BASE46_THEME')\")" 2>/dev/null | grep -qE "^(true|v:true|1)$"; then
+    reloaded=$((reloaded + 1))
+  fi
+done
+
+echo "nvchad-theme: omarchy '$OMARCHY_THEME' -> base46 '$BASE46_THEME' (chadrc updated, $reloaded running nvim reloaded)"

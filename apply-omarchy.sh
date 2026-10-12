@@ -86,5 +86,12 @@ omarchy restart terminal
 "$DOTFILES_DIR/omarchy/boot/set-limine-timeout.sh" 2
 # 2. SDDM login: profile avatar instead of the Omarchy logo.
 "$DOTFILES_DIR/omarchy/sddm/install-profile-theme.sh"
+# 3. NvChad follows `omarchy theme set` via a theme-set hook (maps the
+# Omarchy theme to the closest base46 theme, persists it in chadrc.lua and
+# live-reloads running nvim -- no restart needed).
+mkdir -p "$HOME/.config/omarchy/hooks/theme-set.d"
+cp "$DOTFILES_DIR/omarchy/hooks/theme-set.d/nvchad-theme" "$HOME/.config/omarchy/hooks/theme-set.d/nvchad-theme"
+chmod +x "$HOME/.config/omarchy/hooks/theme-set.d/nvchad-theme"
+echo "applied: ~/.config/omarchy/hooks/theme-set.d/nvchad-theme"
 
 echo "done. verify with: omarchy menu keybindings --print"
