@@ -40,6 +40,12 @@ base46_for_omarchy() {
     solitude)          echo "ashes" ;;
     tokyo-night)       echo "tokyonight" ;;
     vantablack)        echo "doomchad" ;;
+    embark)            echo "embark" ;;
+    doomchad)          echo "doomchad" ;;
+    nightlamp)         echo "nightlamp" ;;
+    onedark)           echo "onedark" ;;
+    sweetpastel)       echo "sweetpastel" ;;
+    vesper)            echo "vesper" ;;
     white)             echo "default-light" ;;
     *)
       echo "catppuccin" ;;

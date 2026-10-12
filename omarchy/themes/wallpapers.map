@@ -1,0 +1,17 @@
+# System Options themes wallpaper assignments.
+# Format: <theme-slug>:<file in pictures/wallpapers/> (exactly one per theme,
+# so `omarchy theme set` is deterministic).
+# Custom themes (dirs under omarchy/themes/) land in
+# ~/.config/omarchy/themes/<slug>/backgrounds/; stock themes (nord,
+# everforest) land in ~/.config/omarchy/backgrounds/<slug>/.
+catppuccin:dark-cat-rosewater.png
+doomchad:BlackHole2.png
+embark:vibrant-colors.png
+everforest:art-lake.png
+nightlamp:Palette 2.png
+nord:nord_lake.png
+onedark:lines.png
+sweetpastel:Palette 3.png
+tokyo-night:9580175.png
+vesper:abstract.png
+

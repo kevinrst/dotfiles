@@ -94,4 +94,29 @@ cp "$DOTFILES_DIR/omarchy/hooks/theme-set.d/nvchad-theme" "$HOME/.config/omarchy
 chmod +x "$HOME/.config/omarchy/hooks/theme-set.d/nvchad-theme"
 echo "applied: ~/.config/omarchy/hooks/theme-set.d/nvchad-theme"
 
+# Custom Omarchy themes (colors.toml derived from NvChad base46 palettes via
+# omarchy/themes/generate-from-base46.py). Sync whole dirs; custom slugs
+# shadow same-named stock themes (catppuccin, everforest).
+mkdir -p "$HOME/.config/omarchy/themes"
+for theme_dir in "$DOTFILES_DIR"/omarchy/themes/*/; do
+  slug="$(basename "$theme_dir")"
+  mkdir -p "$HOME/.config/omarchy/themes/$slug"
+  cp -r "$theme_dir"* "$HOME/.config/omarchy/themes/$slug/"
+  echo "applied: ~/.config/omarchy/themes/$slug/"
+done
+
+# One wallpaper per theme (see omarchy/themes/wallpapers.map). Custom themes
+# keep it in their own backgrounds/; stock themes use backgrounds/<slug>/.
+while IFS=: read -r slug file; do
+  case "$slug" in \#*|"") continue ;; esac
+  if [[ -d "$DOTFILES_DIR/omarchy/themes/$slug" ]]; then
+    dest="$HOME/.config/omarchy/themes/$slug/backgrounds"
+  else
+    dest="$HOME/.config/omarchy/backgrounds/$slug"
+  fi
+  mkdir -p "$dest"
+  cp "$DOTFILES_DIR/pictures/wallpapers/$file" "$dest/"
+done < "$DOTFILES_DIR/omarchy/themes/wallpapers.map"
+echo "applied: theme wallpapers (see omarchy/themes/wallpapers.map)"
+
 echo "done. verify with: omarchy menu keybindings --print"
