@@ -1,0 +1,14 @@
+{
+  // System Options menu, opened with SUPER+O (the setup menu moved to
+  // SUPER+SHIFT+O). See omarchy/hypr/bindings.lua.
+  // Hot-reloads on save; force with `omarchy menu refresh`.
+  "sysops": {"icon":"","label":"System Options","aliases":["sysops","options","system-options"],"description":"Theme, background and monitor settings"},
+  "sysops.theme": {"icon":"󰸌","label":"Theme","description":"Pick a theme","action":"theme=$(omarchy-theme-switcher); [[ -n $theme ]] && omarchy-theme-set \"$theme\""},
+  "sysops.background": {"icon":"","label":"Background","description":"Pick a wallpaper","action":"background=$(omarchy-theme-bg-switcher); [[ -n $background ]] && omarchy-theme-bg-set \"$background\""},
+  "sysops.monitor": {"icon":"󰍹","label":"Monitor"},
+  "sysops.monitor.mirror": {"icon":"󰍹","label":"Mirror display","description":"Mirror the internal display to the external one","when":"omarchy-hw-laptop","action":"omarchy-hyprland-monitor-internal-mirror toggle"},
+  "sysops.monitor.second-left": {"icon":"󰍹","label":"External left","description":"Place the second monitor on the left","action":"omarchy-monitor-arrange left"},
+  "sysops.monitor.second-right": {"icon":"󰍹","label":"External right","description":"Place the second monitor on the right","action":"omarchy-monitor-arrange right"},
+  "sysops.monitor.laptop": {"icon":"󰛧","label":"Laptop display on/off","when":"omarchy-hw-laptop","action":"omarchy-hyprland-monitor-internal toggle"},
+  "sysops.toggles": {"icon":"󰔎","label":"Toggles","description":"Nightlight, stay-awake, notifications","action":"omarchy-menu close; sleep 0.2; omarchy-menu summon trigger.toggle"}
+}

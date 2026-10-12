@@ -30,7 +30,8 @@
 
 -- Custom bindings ported from config/hypr/hyprland.lua (old Arch setup).
 -- Old config used: terminal=kitty, browser=zen-browser, fileManager=nautilus.
--- SUPER+R/O use Omarchy's built-in menus instead of the old rofi scripts.
+-- SUPER+R opens the apps menu, SUPER+O the custom System Options menu
+-- (theme/background/monitor, Omarchy-menu style), replacing the old rofi scripts.
 -- SUPER+M removed: power menu lives on SUPER+ESC (Omarchy default).
 
 -- App launches (no conflicts, no unbind needed)
@@ -49,7 +50,10 @@ o.bind("SUPER + V", "Toggle floating", hl.dsp.window.float({ action = "toggle" }
 
 -- Unbind existing SUPER+O (was: Pop window out (float & pin))
 hl.unbind("SUPER + O")
-o.bind("SUPER + O", "Setup menu (settings)", "omarchy-menu toggle setup")
+o.bind("SUPER + O", "System options (theme/background/monitor)", "omarchy-menu toggle sysops")
+
+-- Setup menu moved off SUPER+O to SUPER+SHIFT+O (free: only unbound below).
+o.bind("SUPER + SHIFT + O", "Setup menu (settings)", "omarchy-menu toggle setup")
 
 -- Unbind existing SUPER+ALT+S (was: Move window to scratchpad)
 hl.unbind("SUPER + ALT + S")
@@ -132,7 +136,8 @@ hl.unbind("SUPER + SHIFT + M") -- was: Music (Spotify)
 hl.unbind("SUPER + SHIFT + ALT + M") -- was: Music TUI
 hl.unbind("SUPER + SHIFT + D") -- was: Docker
 hl.unbind("SUPER + SHIFT + G") -- was: Signal
-hl.unbind("SUPER + SHIFT + O") -- was: Obsidian
+-- NOTE: no unbind for SUPER + SHIFT + O here: it now hosts the setup menu
+-- (bound above). The stock Obsidian binding it replaced is intentionally gone.
 
 -- Bar panels / widgets
 hl.unbind("SUPER + CTRL + code:10") -- was: Bar panel 1

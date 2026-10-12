@@ -23,6 +23,8 @@ ohmyposh/zen.toml:.config/ohmyposh/zen.toml
 ohmyposh/base.json:.config/ohmyposh/base.json
 zsh/.zshrc:.zshrc
 tmux/tmux.conf:.config/tmux/tmux.conf
+extensions/omarchy-menu.jsonc:.config/omarchy/extensions/omarchy-menu.jsonc
+scripts/monitor-arrange.sh:.local/bin/omarchy-monitor-arrange
 "
 
 timestamp=$(date +%s)
@@ -42,6 +44,9 @@ for pair in $MAP; do
   cp "$src" "$dst"
   echo "applied: $dst"
 done
+
+# Menu helper deployed above must stay executable (cp does not guarantee +x).
+chmod +x "$HOME/.local/bin/omarchy-monitor-arrange"
 
 # TPM (tmux plugin manager) required by tmux.conf.
 if [[ ! -d "$HOME/.tmux/plugins/tpm" ]]; then
@@ -75,5 +80,11 @@ fi
 echo "hyprctl configerrors: clean"
 
 omarchy restart terminal
+
+# System-level customizations (need privilege; scripts use sudo/pkexec).
+# 1. Limine boot menu timeout -> 2s (default template leaves it at 5s).
+"$DOTFILES_DIR/omarchy/boot/set-limine-timeout.sh" 2
+# 2. SDDM login: profile avatar instead of the Omarchy logo.
+"$DOTFILES_DIR/omarchy/sddm/install-profile-theme.sh"
 
 echo "done. verify with: omarchy menu keybindings --print"
