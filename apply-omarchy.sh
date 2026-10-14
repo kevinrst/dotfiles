@@ -24,6 +24,7 @@ ohmyposh/base.json:.config/ohmyposh/base.json
 zsh/.zshrc:.zshrc
 tmux/tmux.conf:.config/tmux/tmux.conf
 extensions/omarchy-menu.jsonc:.config/omarchy/extensions/omarchy-menu.jsonc
+branding/screensaver.txt:.config/omarchy/branding/screensaver.txt
 scripts/monitor-arrange.sh:.local/bin/omarchy-monitor-arrange
 "
 
@@ -91,6 +92,20 @@ mkdir -p "$HOME/.config/omarchy/hooks/theme-set.d"
 cp "$DOTFILES_DIR/omarchy/hooks/theme-set.d/nvchad-theme" "$HOME/.config/omarchy/hooks/theme-set.d/nvchad-theme"
 chmod +x "$HOME/.config/omarchy/hooks/theme-set.d/nvchad-theme"
 echo "applied: ~/.config/omarchy/hooks/theme-set.d/nvchad-theme"
+
+# 3. Idle timings: screensaver after 10min, lock 2.5min later (stock gap).
+# Patch only the idle keys so bar/layout customizations in shell.json survive
+# (shell.json hot-reloads, no restart needed).
+python3 - <<'EOF'
+import json
+from pathlib import Path
+p = Path.home() / ".config/omarchy/shell.json"
+d = json.loads(p.read_text())
+d.setdefault("idle", {})["screensaver"] = 600
+d["idle"]["lock"] = 750
+p.write_text(json.dumps(d, indent=2) + "\n")
+EOF
+echo "applied: idle screensaver=600 lock=750 in shell.json"
 
 # Custom Omarchy themes (colors.toml derived from NvChad base46 palettes via
 # omarchy/themes/generate-from-base46.py). Sync whole dirs; custom slugs
