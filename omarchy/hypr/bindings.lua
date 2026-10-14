@@ -55,13 +55,14 @@ o.bind("SUPER + O", "System options (theme/background/monitor)", "omarchy-menu t
 -- Setup menu moved off SUPER+O to SUPER+SHIFT+O (free: only unbound below).
 o.bind("SUPER + SHIFT + O", "Setup menu (settings)", "omarchy-menu toggle setup")
 
--- Unbind existing SUPER+ALT+S (was: Move window to scratchpad)
+-- SUPER+ALT+S / SUPER+ALT+F left unbound (were: scratchpad-move / maximize).
 hl.unbind("SUPER + ALT + S")
-o.bind("SUPER + ALT + S", "Screenshot region (grim+swappy)", 'grim -g "$(slurp)" - | swappy -f -')
-
--- Unbind existing SUPER+ALT+F (was: Full width / maximized)
 hl.unbind("SUPER + ALT + F")
-o.bind("SUPER + ALT + F", "Screenshot monitor (grim+swappy)", 'grim -o "$(hyprctl activeworkspace -j | jq -r \'.monitor\')" - | swappy -f -')
+
+-- Screenshots via Omarchy capture
+-- P = region, F = fullscreen
+o.bind("SUPER + SHIFT + P", "Screenshot region", "omarchy capture screenshot region")
+o.bind("SUPER + SHIFT + F", "Screenshot monitor", "omarchy capture screenshot fullscreen")
 
 -- Move windows with SUPER+SHIFT+arrows (overrides Omarchy Swap window in those keys)
 hl.unbind("SUPER + SHIFT + LEFT")
