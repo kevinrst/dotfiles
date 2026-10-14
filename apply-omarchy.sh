@@ -84,9 +84,7 @@ omarchy restart terminal
 # System-level customizations (need privilege; scripts use sudo/pkexec).
 # 1. Limine boot menu timeout -> 2s (default template leaves it at 5s).
 "$DOTFILES_DIR/omarchy/boot/set-limine-timeout.sh" 2
-# 2. SDDM login: profile avatar instead of the Omarchy logo.
-"$DOTFILES_DIR/omarchy/sddm/install-profile-theme.sh"
-# 3. NvChad follows `omarchy theme set` via a theme-set hook (maps the
+# 2. NvChad follows `omarchy theme set` via a theme-set hook (maps the
 # Omarchy theme to the closest base46 theme, persists it in chadrc.lua and
 # live-reloads running nvim -- no restart needed).
 mkdir -p "$HOME/.config/omarchy/hooks/theme-set.d"
@@ -139,5 +137,8 @@ if [[ -d /usr/share/omarchy/themes/nord/backgrounds ]]; then
   fi
   echo "pruned: stock nord backgrounds (only nord_lake.png remains available)"
 fi
+
+# Change omarchy title from login screen to an image
+omarchy plymouth set '#2e3440' '#d8dee9' ~/Kevin/dotfiles/pictures/profile-round.png
 
 echo "done. verify with: omarchy menu keybindings --print"

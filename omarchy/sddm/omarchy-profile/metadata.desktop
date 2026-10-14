@@ -1,7 +1,0 @@
-[SddmGreeterTheme]
-Name=Omarchy Profile
-Description=Omarchy login with profile avatar instead of the Omarchy logo
-Author=kevin
-Type=sddm-theme
-Version=1.0
-QtVersion=6
