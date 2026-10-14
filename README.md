@@ -1,3 +1,35 @@
+## Omarchy setup (current system)
+
+Customizations live in `omarchy/` and are applied by `apply-omarchy.sh`
+(Hyprland bindings, kitty, zsh, tmux, oh-my-posh, shell bar, idle timings,
+custom themes + wallpapers, NvChad + theme hook, Limine timeout, plymouth).
+Safe to re-run: replaced files are backed up with a timestamp first.
+
+```bash
+# Clone wherever you keep it (example: ~/dotfiles)
+git clone https://github.com/Kevinrestrepoh/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+
+chmod +x apply-omarchy.sh
+./apply-omarchy.sh
+```
+
+Notes:
+
+- **Password:** the script asks for your sudo password **once** up front and
+  keeps it cached while it runs (package installs, Limine timeout, theme
+  pruning, plymouth all need privilege). Optional, to skip passwords
+  permanently for these steps, add a file like `/etc/sudoers.d/omarchy-apply`
+  (via `visudo`) with `NOPASSWD` rules for the exact commands — e.g.
+  `kevin ALL=(ALL) NOPASSWD: /usr/bin/pacman, /usr/bin/rm`.
+- **Stock themes:** a plain run manages only your themes in
+  `~/.config/omarchy/themes/` (the 9 declared + `nord`). Stock themes in
+  `/usr/share/omarchy/themes/` are owned by the omarchy package and come back
+  on every `omarchy update`, so hiding them is opt-in and ephemeral:
+  `PRUNE_STOCK_THEMES=1 ./apply-omarchy.sh`.
+
+## 0. Legacy manual Arch setup (pre-Omarchy, kept for reference)
+
 ## 1. Install Arch Linux
 
 You can either follow the **manual installation** or use `archinstall` to simplify the process.

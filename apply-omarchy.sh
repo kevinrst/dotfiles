@@ -14,6 +14,17 @@ set -euo pipefail
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SRC_BASE="$DOTFILES_DIR/omarchy"
 
+# Cache sudo credentials once: several steps below need privilege (package
+# installs, limine timeout, stock theme pruning, plymouth). Without this the
+# script prompts for the password at each step; with it, once (and the
+# timestamp is kept alive while the script runs).
+if command -v sudo >/dev/null 2>&1; then
+  sudo -v || echo "warning: sudo auth failed; you will be prompted per privileged step" >&2
+  ( while true; do sudo -n true 2>/dev/null || exit; sleep 50; done ) &
+  _sudo_keepalive=$!
+  trap 'kill "$_sudo_keepalive" 2>/dev/null || true' EXIT
+fi
+
 # Source:destination pairs, destination relative to $HOME.
 MAP="
 hypr/bindings.lua:.config/hypr/bindings.lua
@@ -29,6 +40,19 @@ scripts/monitor-arrange.sh:.local/bin/omarchy-monitor-arrange
 "
 
 timestamp=$(date +%s)
+
+# Terminal + shell prerequisites (Omarchy-native installs).
+# kitty.conf sets `shell /usr/bin/zsh`, so zsh must exist -- without it kitty
+# fails with "Failed to launch child: zsh / No such file or directory".
+# `install terminal kitty` installs kitty (if missing) and sets it as the
+# default for xdg-terminal-exec / SUPER+RETURN handling.
+omarchy pkg add zsh
+omarchy install terminal kitty
+# Prompt (oh-my-posh) required by omarchy/zsh/.zshrc. AUR-only on Arch;
+# best-effort so the script still succeeds when the AUR is unreachable.
+if ! command -v oh-my-posh >/dev/null 2>&1; then
+  omarchy pkg aur add oh-my-posh || echo "warning: oh-my-posh not installed; zsh prompt will error until it is" >&2
+fi
 
 for pair in $MAP; do
   src="$SRC_BASE/${pair%%:*}"
@@ -48,6 +72,19 @@ done
 
 # Menu helper deployed above must stay executable (cp does not guarantee +x).
 chmod +x "$HOME/.local/bin/omarchy-monitor-arrange"
+
+# NvChad (replaces any existing config, e.g. the LazyVim starter).
+# Source lives in config/nvim, outside omarchy/ so it can't go in MAP above.
+# Move (not copy-over) so stale files from the old config can't linger.
+if [[ -d "$DOTFILES_DIR/config/nvim" ]]; then
+  if [[ -e "$HOME/.config/nvim" ]]; then
+    mv "$HOME/.config/nvim" "$HOME/.config/nvim.bak.$timestamp"
+    echo "backup: ~/.config/nvim -> ~/.config/nvim.bak.$timestamp"
+  fi
+  cp -r "$DOTFILES_DIR/config/nvim" "$HOME/.config/nvim"
+  echo "applied: ~/.config/nvim (NvChad from dotfiles config/nvim)"
+  echo "note: NvChad plugins install on first nvim launch via lazy bootstrap"
+fi
 
 # TPM (tmux plugin manager) required by tmux.conf.
 if [[ ! -d "$HOME/.tmux/plugins/tpm" ]]; then
@@ -117,6 +154,11 @@ mkdir -p "$HOME/.config/omarchy/plugins/kevin.workspaces"
 cp "$DOTFILES_DIR/omarchy/plugins/kevin.workspaces/Workspaces.qml" "$HOME/.config/omarchy/plugins/kevin.workspaces/Workspaces.qml"
 cp "$DOTFILES_DIR/omarchy/plugins/kevin.workspaces/manifest.json" "$HOME/.config/omarchy/plugins/kevin.workspaces/manifest.json"
 echo "applied: kevin.workspaces (only-used workspaces)"
+# Plugin file saves usually auto-reload, but a copy-over can be missed --
+# force a rescan so the running shell picks up the new QML now, not later.
+# Best-effort: no-ops when the shell isn't running (-q suppresses the error).
+omarchy-shell -q shell rescanPlugins || true
+echo "rescanned: shell plugins"
 # Drop the menu icon from bar left (plugin stays enabled, Super menu works);
 # ensure our workspaces clone is there. Other bar keys are left untouched.
 python3 - <<'EOF'
@@ -135,17 +177,28 @@ echo "applied: bar left without menu icon"
 
 # Custom Omarchy themes (colors.toml derived from NvChad base46 palettes via
 # omarchy/themes/generate-from-base46.py). Sync whole dirs; custom slugs
-# shadow same-named stock themes (catppuccin, everforest).
+# shadow same-named stock themes (catppuccin, everforest, tokyo-night).
 mkdir -p "$HOME/.config/omarchy/themes"
+# Declared set = every directory under omarchy/themes/. Anything else in
+# ~/.config/omarchy/themes/ is stale (a theme removed from the repo or installed
+# via `omarchy theme install`) and is pruned below so only declared ones remain
+# in user space.
+keep_slugs=()
 for theme_dir in "$DOTFILES_DIR"/omarchy/themes/*/; do
   slug="$(basename "$theme_dir")"
+  keep_slugs+=("$slug")
+  # Fresh sync so files deleted from the repo don't linger in ~/.config.
+  rm -rf "$HOME/.config/omarchy/themes/$slug"
   mkdir -p "$HOME/.config/omarchy/themes/$slug"
   cp -r "$theme_dir"* "$HOME/.config/omarchy/themes/$slug/"
   echo "applied: ~/.config/omarchy/themes/$slug/"
 done
 
 # One wallpaper per theme (see omarchy/themes/wallpapers.map). Custom themes
-# keep it in their own backgrounds/; stock themes use backgrounds/<slug>/.
+# keep it in their own backgrounds/; stock themes use backgrounds/<slug/>.
+# Each destination is cleared on first use so wallpapers removed from the map
+# don't linger (the map lists every wallpaper a kept theme should have).
+declare -A _cleaned_bg_dirs=()
 while IFS=: read -r slug file; do
   case "$slug" in \#*|"") continue ;; esac
   if [[ -d "$DOTFILES_DIR/omarchy/themes/$slug" ]]; then
@@ -154,6 +207,10 @@ while IFS=: read -r slug file; do
     dest="$HOME/.config/omarchy/backgrounds/$slug"
   fi
   mkdir -p "$dest"
+  if [[ -z "${_cleaned_bg_dirs[$dest]:-}" ]]; then
+    rm -f "$dest"/*
+    _cleaned_bg_dirs[$dest]=1
+  fi
   cp "$DOTFILES_DIR/pictures/wallpapers/$file" "$dest/"
 done < "$DOTFILES_DIR/omarchy/themes/wallpapers.map"
 echo "applied: theme wallpapers (see omarchy/themes/wallpapers.map)"
@@ -165,6 +222,69 @@ echo "applied: theme wallpapers (see omarchy/themes/wallpapers.map)"
 mkdir -p "$HOME/.config/omarchy/themes/nord"
 cp "$DOTFILES_DIR/pictures/wallpapers/nord_lake.png" "$HOME/.config/omarchy/themes/nord/preview.png"
 echo "applied: nord preview override (background-only)"
+
+# Prune user-space themes/backgrounds not declared above (nord is kept: it has
+# the preview override and a wallpapers.map entry). If the active theme is
+# about to be pruned, switch to the first declared theme first so the session
+# never points at a deleted directory.
+is_kept_user_theme() {
+  local s="$1"
+  [[ "$s" == "nord" ]] && return 0
+  local k
+  for k in "${keep_slugs[@]}"; do [[ "$k" == "$s" ]] && return 0; done
+  return 1
+}
+current_slug="$(cat "$HOME/.local/state/omarchy/current/theme.name" 2>/dev/null || true)"
+if [[ -n "$current_slug" ]] && ! is_kept_user_theme "$current_slug"; then
+  if [[ -d "$HOME/.config/omarchy/themes/$current_slug" ]]; then
+    echo "current theme '$current_slug' is not declared; switching to '${keep_slugs[0]}' before pruning"
+    omarchy theme set "${keep_slugs[0]}"
+  fi
+fi
+for user_theme_dir in "$HOME"/.config/omarchy/themes/*/; do
+  [[ -d "$user_theme_dir" ]] || continue
+  slug="$(basename "$user_theme_dir")"
+  if ! is_kept_user_theme "$slug"; then
+    rm -rf "$user_theme_dir"
+    echo "pruned: ~/.config/omarchy/themes/$slug/ (not declared)"
+  fi
+done
+# Prune per-theme user background folders for slugs with no wallpapers.map
+# entry (kept themes were already synced to exactly the mapped files above).
+if [[ -d "$HOME/.config/omarchy/backgrounds" ]]; then
+  for bg_dir in "$HOME"/.config/omarchy/backgrounds/*/; do
+    [[ -d "$bg_dir" ]] || continue
+    slug="$(basename "$bg_dir")"
+    if ! grep -qE "^${slug}:" "$DOTFILES_DIR/omarchy/themes/wallpapers.map"; then
+      rm -rf "$bg_dir"
+      echo "pruned: ~/.config/omarchy/backgrounds/$slug/ (not declared)"
+    fi
+  done
+fi
+
+# Stock themes live in /usr/share/omarchy/themes/ (owned by the omarchy
+# package). `omarchy theme list` shows the union of stock + user themes, so
+# pruning user space above does NOT hide stock themes -- there is no supported
+# hide mechanism, and anything deleted here returns on the next `omarchy
+# update`. To also hide them ephemerally, re-run with PRUNE_STOCK_THEMES=1.
+if [[ "${PRUNE_STOCK_THEMES:-0}" == "1" ]]; then
+  for stock_theme_dir in /usr/share/omarchy/themes/*/; do
+    [[ -d "$stock_theme_dir" ]] || continue
+    slug="$(basename "$stock_theme_dir")"
+    if ! is_kept_user_theme "$slug"; then
+      if sudo -n true 2>/dev/null; then
+        sudo rm -rf "$stock_theme_dir"
+      elif command -v pkexec >/dev/null 2>&1; then
+        pkexec rm -rf "$stock_theme_dir"
+      else
+        sudo rm -rf "$stock_theme_dir"
+      fi
+      echo "pruned (ephemeral, restored by omarchy update): /usr/share/omarchy/themes/$slug/"
+    fi
+  done
+else
+  echo "note: stock themes in /usr/share/omarchy/themes/ are left alone (re-run with PRUNE_STOCK_THEMES=1 to hide them until the next omarchy update)"
+fi
 
 # Stock nord ships several backgrounds; keep only ours (nord_lake.png, added
 # above via backgrounds/nord/). Needs privilege; re-created by omarchy updates.
@@ -180,6 +300,6 @@ if [[ -d /usr/share/omarchy/themes/nord/backgrounds ]]; then
 fi
 
 # Change omarchy title from login screen to an image
-omarchy plymouth set '#2e3440' '#d8dee9' ~/Kevin/dotfiles/pictures/profile-round.png
+omarchy plymouth set '#2e3440' '#d8dee9' "$DOTFILES_DIR/pictures/profile-round.png"
 
 echo "done. verify with: omarchy menu keybindings --print"
