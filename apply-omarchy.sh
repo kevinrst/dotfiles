@@ -119,6 +119,14 @@ while IFS=: read -r slug file; do
 done < "$DOTFILES_DIR/omarchy/themes/wallpapers.map"
 echo "applied: theme wallpapers (see omarchy/themes/wallpapers.map)"
 
+# Stock nord's preview.png is an apps-mockup; every other theme previews just
+# its background. Overlay a copy of our nord wallpaper as the preview so nord
+# matches (user theme dirs shadow same-named stock files; the rest of nord
+# still comes from stock).
+mkdir -p "$HOME/.config/omarchy/themes/nord"
+cp "$DOTFILES_DIR/pictures/wallpapers/nord_lake.png" "$HOME/.config/omarchy/themes/nord/preview.png"
+echo "applied: nord preview override (background-only)"
+
 # Stock nord ships several backgrounds; keep only ours (nord_lake.png, added
 # above via backgrounds/nord/). Needs privilege; re-created by omarchy updates.
 if [[ -d /usr/share/omarchy/themes/nord/backgrounds ]]; then
