@@ -107,6 +107,32 @@ p.write_text(json.dumps(d, indent=2) + "\n")
 EOF
 echo "applied: idle screensaver=600 lock=750 in shell.json"
 
+# 4. Bar: no menu icon on the left; workspaces widget shows only used ones.
+# Clone once (registers kevin.workspaces and switches the bar to it), then
+# sync our edited QML over it so re-applies keep the customization.
+if [[ ! -d "$HOME/.config/omarchy/plugins/kevin.workspaces" ]]; then
+  omarchy plugin clone omarchy.workspaces
+fi
+mkdir -p "$HOME/.config/omarchy/plugins/kevin.workspaces"
+cp "$DOTFILES_DIR/omarchy/plugins/kevin.workspaces/Workspaces.qml" "$HOME/.config/omarchy/plugins/kevin.workspaces/Workspaces.qml"
+cp "$DOTFILES_DIR/omarchy/plugins/kevin.workspaces/manifest.json" "$HOME/.config/omarchy/plugins/kevin.workspaces/manifest.json"
+echo "applied: kevin.workspaces (only-used workspaces)"
+# Drop the menu icon from bar left (plugin stays enabled, Super menu works);
+# ensure our workspaces clone is there. Other bar keys are left untouched.
+python3 - <<'EOF'
+import json
+from pathlib import Path
+p = Path.home() / ".config/omarchy/shell.json"
+d = json.loads(p.read_text())
+left = d.get("bar", {}).get("layout", {}).get("left", [])
+left = [w for w in left if w.get("id") != "omarchy.menu"]
+if not any(w.get("id") == "kevin.workspaces" for w in left):
+    left.append({"id": "kevin.workspaces"})
+d["bar"]["layout"]["left"] = left
+p.write_text(json.dumps(d, indent=2) + "\n")
+EOF
+echo "applied: bar left without menu icon"
+
 # Custom Omarchy themes (colors.toml derived from NvChad base46 palettes via
 # omarchy/themes/generate-from-base46.py). Sync whole dirs; custom slugs
 # shadow same-named stock themes (catppuccin, everforest).
