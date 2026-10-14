@@ -3,9 +3,10 @@
 # install-profile-theme.sh -- install the omarchy-profile SDDM theme.
 #
 # Copies omarchy/sddm/omarchy-profile/ to /usr/share/sddm/themes/omarchy-profile and
-# points /etc/sddm.conf.d/10-theme.conf at it. The stock `omarchy` theme files
-# are left untouched, so `omarchy refresh sddm` / theme plymouth updates won't
-# wipe the avatar.
+# points SDDM at it via /etc/sddm.conf.d/zz-omarchy-profile.conf (sorts after
+# stock 10-theme.conf and 99-omarchy-login.conf, so ours wins; those stock
+# files are left untouched, so `omarchy refresh sddm` / package updates won't
+# wipe the avatar).
 #
 # Source of truth for the avatar: pictures/profile.png (synced to
 # sddm/omarchy-profile/avatar.png on every run).
@@ -19,7 +20,7 @@ DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 SRC="$DOTFILES_DIR/omarchy/sddm/omarchy-profile"
 THEME_NAME="omarchy-profile"
 DEST="/usr/share/sddm/themes/$THEME_NAME"
-THEME_CONF="/etc/sddm.conf.d/10-theme.conf"
+THEME_CONF="/etc/sddm.conf.d/zz-omarchy-profile.conf"
 
 run_privileged() {
   if sudo -n true 2>/dev/null; then
