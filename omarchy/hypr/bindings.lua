@@ -52,7 +52,8 @@ o.bind("SUPER + V", "Toggle floating", hl.dsp.window.float({ action = "toggle" }
 hl.unbind("SUPER + O")
 o.bind("SUPER + O", "System options (theme/background/monitor)", "omarchy-menu toggle sysops")
 
--- Setup menu moved off SUPER+O to SUPER+SHIFT+O (free: only unbound below).
+-- Setup menu moved off SUPER+O to SUPER+SHIFT+O (was: Obsidian).
+hl.unbind("SUPER + SHIFT + O")
 o.bind("SUPER + SHIFT + O", "Setup menu (settings)", "omarchy-menu toggle setup")
 
 -- SUPER+ALT+S / SUPER+ALT+F left unbound (were: scratchpad-move / maximize).
@@ -60,7 +61,9 @@ hl.unbind("SUPER + ALT + S")
 hl.unbind("SUPER + ALT + F")
 
 -- Screenshots via Omarchy capture
--- P = region, F = fullscreen
+-- P = region, F = fullscreen (unbind stock Photos / File-manager first)
+hl.unbind("SUPER + SHIFT + P")
+hl.unbind("SUPER + SHIFT + F")
 o.bind("SUPER + SHIFT + P", "Screenshot region", "omarchy capture screenshot region")
 o.bind("SUPER + SHIFT + F", "Screenshot monitor", "omarchy capture screenshot fullscreen")
 
@@ -78,7 +81,8 @@ o.bind("SUPER + SHIFT + DOWN", "Move window down", hl.dsp.window.move({ directio
 hl.unbind("SUPER + S")
 hl.unbind("SUPER + SHIFT + S")
 o.bind("SUPER + S", "Toggle special workspace (magic)", hl.dsp.workspace.toggle_special("magic"))
-o.bind("SUPER + SHIFT + S", "Move window to special workspace (magic)", hl.dsp.window.move({ workspace = "special:magic" }))
+o.bind("SUPER + SHIFT + S", "Move window to special workspace (magic)",
+  hl.dsp.window.move({ workspace = "special:magic" }))
 
 -- NOTE: intentionally NOT ported from old config (already covered by Omarchy defaults):
 -- SUPER+P/J/F, SUPER+arrows focus, SUPER+numbers workspaces, SUPER+mouse scroll/drag/resize,
@@ -87,27 +91,27 @@ o.bind("SUPER + SHIFT + S", "Move window to special workspace (magic)", hl.dsp.w
 
 -- strata-installer: file-manager start
 -- Strata file manager (default folder handler, see apply-omarchy.sh).
--- SUPER+E above is the main binding; SUPER+SHIFT+F and the cwd variant are
--- intentionally disabled (unbound below). Markers kept so a manual installer
+-- SUPER+E above is the main binding; the cwd variant is
+-- intentionally disabled (unbound below). SUPER+SHIFT+F is NOT unbound here:
+-- it hosts screenshots (bound above). Markers kept so a manual installer
 -- run detects this and does not re-add binds.
-hl.unbind("SUPER + SHIFT + F")
 hl.unbind("SUPER + ALT + SHIFT + F")
 -- strata-installer: file-manager end
 
 -- Disabled unwanted default bindings (no replacement).
-hl.unbind("SUPER + RETURN") -- was: Terminal (using SUPER+Q instead)
-hl.unbind("SUPER + W") -- was: Close window (using SUPER+C instead)
-hl.unbind("SUPER + CTRL + ALT + W") -- was: Toggle weather
-hl.unbind("SUPER + CTRL + L") -- was: Lock system
-hl.unbind("SUPER + T") -- was: Toggle floating (using SUPER+V instead)
-hl.unbind("SUPER + X") -- was: Universal cut
-hl.unbind("SUPER + PRINT") -- was: Color picker
-hl.unbind("PRINT") -- was: Screenshot (no PRINT key on this keyboard)
-hl.unbind("SUPER + ALT + RETURN") -- was: Tmux
-hl.unbind("SUPER + CTRL + RETURN") -- was: Herdr
+hl.unbind("SUPER + RETURN")          -- was: Terminal (using SUPER+Q instead)
+hl.unbind("SUPER + W")               -- was: Close window (using SUPER+C instead)
+hl.unbind("SUPER + CTRL + ALT + W")  -- was: Toggle weather
+hl.unbind("SUPER + CTRL + L")        -- was: Lock system
+hl.unbind("SUPER + T")               -- was: Toggle floating (using SUPER+V instead)
+hl.unbind("SUPER + X")               -- was: Universal cut
+hl.unbind("SUPER + PRINT")           -- was: Color picker
+hl.unbind("PRINT")                   -- was: Screenshot (no PRINT key on this keyboard)
+hl.unbind("SUPER + ALT + RETURN")    -- was: Tmux
+hl.unbind("SUPER + CTRL + RETURN")   -- was: Herdr
 hl.unbind("SUPER + SHIFT + ALT + B") -- was: Browser (private)
-hl.unbind("SUPER + CTRL + TAB") -- was: Former workspace
-hl.unbind("SUPER + SHIFT + TAB") -- was: Previous workspace (keeping SUPER+TAB = next)
+hl.unbind("SUPER + CTRL + TAB")      -- was: Former workspace
+hl.unbind("SUPER + SHIFT + TAB")     -- was: Previous workspace (keeping SUPER+TAB = next)
 
 -- Screenrecording moved off ALT+PRINT (no PRINT key): now SUPER+ALT+R.
 hl.unbind("ALT + PRINT")
@@ -118,27 +122,27 @@ o.bind("SUPER + ALT + R", "Screenrecording",
 
 -- Core app launches (using SUPER+Q terminal, SUPER+E strata, SUPER+B zen instead)
 hl.unbind("SUPER + SHIFT + RETURN") -- was: Browser
-hl.unbind("SUPER + SHIFT + B") -- was: Browser
-hl.unbind("SUPER + SHIFT + N") -- was: Editor
+hl.unbind("SUPER + SHIFT + B")      -- was: Browser
+hl.unbind("SUPER + SHIFT + N")      -- was: Editor
 
--- Preinstalled web apps / services
-hl.unbind("SUPER + SHIFT + A") -- was: ChatGPT
-hl.unbind("SUPER + SHIFT + ALT + A") -- was: Grok
-hl.unbind("SUPER + SHIFT + C") -- was: Calendar (web)
-hl.unbind("SUPER + SHIFT + E") -- was: Email
-hl.unbind("SUPER + SHIFT + ALT + E") -- was: New email
-hl.unbind("SUPER + SHIFT + Y") -- was: YouTube
-hl.unbind("SUPER + SHIFT + ALT + G") -- was: WhatsApp
+-- Preinstalled web apps / services (NOTE: SHIFT+P / SHIFT+F host screenshots now,
+-- unbound + rebound above, so they are intentionally absent here).
+hl.unbind("SUPER + SHIFT + A")        -- was: ChatGPT
+hl.unbind("SUPER + SHIFT + ALT + A")  -- was: Grok
+hl.unbind("SUPER + SHIFT + C")        -- was: Calendar (web)
+hl.unbind("SUPER + SHIFT + E")        -- was: Email
+hl.unbind("SUPER + SHIFT + ALT + E")  -- was: New email
+hl.unbind("SUPER + SHIFT + Y")        -- was: YouTube
+hl.unbind("SUPER + SHIFT + ALT + G")  -- was: WhatsApp
 hl.unbind("SUPER + SHIFT + CTRL + G") -- was: Google Messages
-hl.unbind("SUPER + SHIFT + P") -- was: Google Photos
-hl.unbind("SUPER + SHIFT + X") -- was: X
-hl.unbind("SUPER + SHIFT + ALT + X") -- was: X Post
-hl.unbind("SUPER + SHIFT + M") -- was: Music (Spotify)
-hl.unbind("SUPER + SHIFT + ALT + M") -- was: Music TUI
-hl.unbind("SUPER + SHIFT + D") -- was: Docker
-hl.unbind("SUPER + SHIFT + G") -- was: Signal
--- NOTE: no unbind for SUPER + SHIFT + O here: it now hosts the setup menu
--- (bound above). The stock Obsidian binding it replaced is intentionally gone.
+hl.unbind("SUPER + SHIFT + X")        -- was: X
+hl.unbind("SUPER + SHIFT + ALT + X")  -- was: X Post
+hl.unbind("SUPER + SHIFT + M")        -- was: Music (Spotify)
+hl.unbind("SUPER + SHIFT + ALT + M")  -- was: Music TUI
+hl.unbind("SUPER + SHIFT + D")        -- was: Docker
+hl.unbind("SUPER + SHIFT + G")        -- was: Signal
+-- NOTE: no unbind for SUPER + SHIFT + O here: it hosts the setup menu
+-- (unbound from Obsidian + rebound above).
 
 -- Bar panels / widgets
 hl.unbind("SUPER + CTRL + code:10") -- was: Bar panel 1
@@ -150,40 +154,40 @@ hl.unbind("SUPER + CTRL + code:15") -- was: Bar panel 6
 hl.unbind("SUPER + CTRL + code:16") -- was: Bar panel 7
 hl.unbind("SUPER + CTRL + code:17") -- was: Bar panel 8
 hl.unbind("SUPER + CTRL + code:18") -- was: Bar panel 9
-hl.unbind("SUPER + CTRL + A") -- was: Audio panel
-hl.unbind("SUPER + CTRL + B") -- was: Bluetooth panel
-hl.unbind("SUPER + CTRL + P") -- was: Power panel
-hl.unbind("SUPER + CTRL + O") -- was: Toggle menu
+hl.unbind("SUPER + CTRL + A")       -- was: Audio panel
+hl.unbind("SUPER + CTRL + B")       -- was: Bluetooth panel
+hl.unbind("SUPER + CTRL + P")       -- was: Power panel
+hl.unbind("SUPER + CTRL + O")       -- was: Toggle menu
 hl.unbind("SUPER + CTRL + ALT + D") -- was: Calendar panel
 hl.unbind("SUPER + CTRL + ALT + B") -- was: Battery
 hl.unbind("SUPER + CTRL + ALT + T") -- was: Time
 hl.unbind("SUPER + CTRL + ALT + R") -- was: Show reminders
 
 -- Toggles / utilities
-hl.unbind("SUPER + CTRL + F") -- was: Tiled full screen
-hl.unbind("SUPER + CTRL + BACKSPACE") -- was: Single-window square aspect
-hl.unbind("SUPER + CTRL + ALT + Z") -- was: Reset zoom
+hl.unbind("SUPER + CTRL + F")            -- was: Tiled full screen
+hl.unbind("SUPER + CTRL + BACKSPACE")    -- was: Single-window square aspect
+hl.unbind("SUPER + CTRL + ALT + Z")      -- was: Reset zoom
 hl.unbind("SUPER + CTRL + ALT + Delete") -- was: Display mirroring
-hl.unbind("SUPER + Home") -- was: Restore window width
+hl.unbind("SUPER + Home")                -- was: Restore window width
 
 -- Window grouping (all of it: group windows are tiled windows tabbed together)
-hl.unbind("SUPER + G") -- was: Toggle window grouping
-hl.unbind("SUPER + ALT + G") -- was: Move window out of group
-hl.unbind("SUPER + ALT + LEFT") -- was: Move window into group (left)
-hl.unbind("SUPER + ALT + RIGHT") -- was: Move window into group (right)
-hl.unbind("SUPER + ALT + UP") -- was: Move window into group (top)
-hl.unbind("SUPER + ALT + DOWN") -- was: Move window into group (bottom)
-hl.unbind("SUPER + ALT + TAB") -- was: Next window in group
+hl.unbind("SUPER + G")                 -- was: Toggle window grouping
+hl.unbind("SUPER + ALT + G")           -- was: Move window out of group
+hl.unbind("SUPER + ALT + LEFT")        -- was: Move window into group (left)
+hl.unbind("SUPER + ALT + RIGHT")       -- was: Move window into group (right)
+hl.unbind("SUPER + ALT + UP")          -- was: Move window into group (top)
+hl.unbind("SUPER + ALT + DOWN")        -- was: Move window into group (bottom)
+hl.unbind("SUPER + ALT + TAB")         -- was: Next window in group
 hl.unbind("SUPER + ALT + SHIFT + TAB") -- was: Previous window in group
-hl.unbind("SUPER + CTRL + LEFT") -- was: Grouped window focus left
-hl.unbind("SUPER + CTRL + RIGHT") -- was: Grouped window focus right
-hl.unbind("SUPER + ALT + mouse_down") -- was: Next window in group (mouse)
-hl.unbind("SUPER + ALT + mouse_up") -- was: Previous window in group (mouse)
-hl.unbind("SUPER + ALT + code:10") -- was: Group window 1
-hl.unbind("SUPER + ALT + code:11") -- was: Group window 2
-hl.unbind("SUPER + ALT + code:12") -- was: Group window 3
-hl.unbind("SUPER + ALT + code:13") -- was: Group window 4
-hl.unbind("SUPER + ALT + code:14") -- was: Group window 5
+hl.unbind("SUPER + CTRL + LEFT")       -- was: Grouped window focus left
+hl.unbind("SUPER + CTRL + RIGHT")      -- was: Grouped window focus right
+hl.unbind("SUPER + ALT + mouse_down")  -- was: Next window in group (mouse)
+hl.unbind("SUPER + ALT + mouse_up")    -- was: Previous window in group (mouse)
+hl.unbind("SUPER + ALT + code:10")     -- was: Group window 1
+hl.unbind("SUPER + ALT + code:11")     -- was: Group window 2
+hl.unbind("SUPER + ALT + code:12")     -- was: Group window 3
+hl.unbind("SUPER + ALT + code:13")     -- was: Group window 4
+hl.unbind("SUPER + ALT + code:14")     -- was: Group window 5
 
 -- Toggle top bar moved from SUPER+SHIFT+SPACE to SUPER+W.
 hl.unbind("SUPER + SHIFT + SPACE")
